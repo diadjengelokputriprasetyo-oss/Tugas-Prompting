@@ -1,0 +1,31 @@
+flowchart TD
+    %% Titik Masuk
+    A([Titik Masuk: Menu Peramalan Stok]) --> B[Pengguna Pilih Suku Cadang & Metode AI]
+    
+    %% Status 1: Validasi Awal (Client-Side)
+    B --> C{Validasi Lokal: Data Histori >= 3 Bulan?}
+    C -- Tidak --> C1[Tampilkan Tooltip: Data Histori Kurang] --> B
+    C -- Ya --> D[Pengguna Klik 'Jalankan Peramalan']
+    
+    %% Status 2: Indikator Pemrosesan
+    D --> E[Tampilkan Loading Spinner & Status 'Menganalisis Data...']
+    E --> F{Request Backend AI}
+    
+    %% Status 4: Fallback Engine
+    F -- Timeout > 3s / Server Error --> G[Tampilkan Banner: AI Fallback Active]
+    G --> H[Hitung Prediksi dengan Simple Moving Average]
+    H --> I[Tampilkan Hasil Prediksi Cadangan]
+    
+    %% Status 3: Penanganan Hasil AI
+    F -- Sukses Responsive --> J{Cek Confidence Level / SMAPE}
+    J -- Low Confidence (SMAPE > 25%) --> K[Tampilkan Warning Badge 'Variabilitas Tinggi']
+    K --> L[Tampilkan Grafik & Hasil Prediksi]
+    L --> M[Aktifkan Opsi Manual Override]
+    
+    J -- High Confidence (SMAPE <= 25%) --> N[Tampilkan Badge Hijau 'Akurasi Tinggi']
+    N --> O[Tampilkan Grafik, Prediksi & Safety Stock]
+    
+    %% Selesai
+    I --> P([Selesai: Simpan / Gunakan Rekomendasi Stok])
+    M --> P
+    O --> P
