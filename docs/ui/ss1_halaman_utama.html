@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoPartSmart - State 1: Halaman Utama</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
+  <!-- Navbar -->
+  <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+          <i class="fa-solid fa-gears text-lg"></i>
+        </div>
+        <div>
+          <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-200 bg-clip-text text-transparent">AutoPartSmart</span>
+          <span class="text-xs ml-2 px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium">AI Demand Forecast v1.0</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          FastAPI Backend: Online (Port 8000)
+        </div>
+        <div class="flex items-center gap-3 pl-4 border-l border-slate-800">
+          <div class="w-9 h-9 rounded-full bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-300 font-bold text-sm">
+            PB
+          </div>
+          <div>
+            <div class="text-xs font-semibold text-slate-200">Pak Budi (Manager Stok)</div>
+            <div class="text-[10px] text-slate-400">Bengkel Otomotif Mitra</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-6 py-8">
+    <!-- Top Stat Banners -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
+      <div class="p-5 rounded-2xl bg-slate-800/60 border border-slate-700/60 backdrop-blur">
+        <div class="flex items-center justify-between text-slate-400 mb-3">
+          <span class="text-xs font-semibold uppercase tracking-wider">Akurasi Model KNN</span>
+          <i class="fa-solid fa-bullseye text-blue-400 text-sm"></i>
+        </div>
+        <div class="text-3xl font-extrabold text-white">92.69%</div>
+        <div class="text-xs text-emerald-400 font-medium mt-1 flex items-center gap-1">
+          <i class="fa-solid fa-arrow-down"></i> Error SMAPE 7.63% (Target &lt; 10%)
+        </div>
+      </div>
+
+      <div class="p-5 rounded-2xl bg-slate-800/60 border border-slate-700/60 backdrop-blur">
+        <div class="flex items-center justify-between text-slate-400 mb-3">
+          <span class="text-xs font-semibold uppercase tracking-wider">Total Prediksi Aktif</span>
+          <i class="fa-solid fa-chart-line text-indigo-400 text-sm"></i>
+        </div>
+        <div class="text-3xl font-extrabold text-white">142 Item</div>
+        <div class="text-xs text-slate-400 font-medium mt-1">Suku cadang teramalkan bulan ini</div>
+      </div>
+
+      <div class="p-5 rounded-2xl bg-slate-800/60 border border-slate-700/60 backdrop-blur">
+        <div class="flex items-center justify-between text-slate-400 mb-3">
+          <span class="text-xs font-semibold uppercase tracking-wider">Safety Stock Terjaga</span>
+          <i class="fa-solid fa-shield-halved text-emerald-400 text-sm"></i>
+        </div>
+        <div class="text-3xl font-extrabold text-white">98.4%</div>
+        <div class="text-xs text-emerald-400 font-medium mt-1">Service Level 95% (Zero Stockout)</div>
+      </div>
+
+      <div class="p-5 rounded-2xl bg-slate-800/60 border border-slate-700/60 backdrop-blur">
+        <div class="flex items-center justify-between text-slate-400 mb-3">
+          <span class="text-xs font-semibold uppercase tracking-wider">Keamanan API OWASP</span>
+          <i class="fa-solid fa-lock text-purple-400 text-sm"></i>
+        </div>
+        <div class="text-3xl font-extrabold text-white">PASSED</div>
+        <div class="text-xs text-purple-400 font-medium mt-1">Anti-BOLA &amp; JWT Token Active</div>
+      </div>
+    </div>
+
+    <!-- Hero Content Banner -->
+    <div class="p-8 rounded-3xl bg-gradient-to-r from-blue-900/40 via-indigo-900/30 to-slate-800/40 border border-blue-500/30 relative overflow-hidden mb-8">
+      <div class="max-w-2xl">
+        <span class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-bold border border-blue-500/30">
+          Sistem Rekomendasi Pengadaan Cerdas
+        </span>
+        <h1 class="text-3xl font-bold text-white mt-4 mb-3 leading-tight">
+          Peramalan Permintaan Suku Cadang &amp; Optimasi Persediaan Bengkel Otomotif
+        </h1>
+        <p class="text-slate-300 text-sm leading-relaxed mb-6">
+          Gunakan kecerdasan buatan model K-Nearest Neighbors (KNN) dengan teknik lag historis 3 bulan untuk mereduksi risiko kerugian <i>overstock</i> dan <i>stockout</i> secara instan dan akurat.
+        </p>
+        <div class="flex items-center gap-4">
+          <a href="#input-section" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm shadow-lg shadow-blue-600/30 transition flex items-center gap-2">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Buat Prediksi Suku Cadang
+          </a>
+          <button class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm border border-slate-700 transition flex items-center gap-2">
+            <i class="fa-solid fa-file-csv"></i> Impor Transaksi CSV
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laporan Praktikum PTM-06 - AutoPartSmart</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+    @page {
+      size: A4;
+      margin: 20mm 15mm 20mm 15mm;
+    }
+    .page-break {
+      page-break-after: always;
+      break-after: page;
+    }
+  </style>
+</head>
+<body class="bg-white text-slate-800 text-sm leading-relaxed antialiased">
+
+  <!-- COVER / HEADER LAPORAN -->
+  <div class="border-b-2 border-slate-900 pb-8 mb-10">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <span class="text-xs font-bold tracking-widest uppercase text-blue-600 bg-blue-50 px-3 py-1 rounded-md border border-blue-200">
+          Lembar Kerja Praktikum • PTM-06
+        </span>
+        <h1 class="text-3xl font-extrabold text-slate-900 mt-3 leading-tight">
+          Laporan Praktikum: Arsitektur Backend API, Autentikasi JWT, dan Keamanan OWASP API
+        </h1>
+        <p class="text-base font-semibold text-slate-600 mt-1">
+          Studi Kasus Sistem: AutoPartSmart (Sistem Peramalan Permintaan &amp; Optimasi Persediaan Suku Cadang Otomotif)
+        </p>
+      </div>
+      <div class="text-right">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center text-white shadow-md text-2xl font-bold ml-auto mb-2">
+          <i class="fa-solid fa-gears"></i>
+        </div>
+        <div class="text-xs font-bold text-slate-900">AutoPartSmart</div>
+        <div class="text-[10px] text-slate-500">FastAPI &bull; ML Engine</div>
+      </div>
+    </div>
+
+    <!-- Metadata Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+      <div>
+        <span class="text-slate-500 block">Mata Kuliah:</span>
+        <span class="font-bold text-slate-800">Intelligent Mobile and Web Application Dev</span>
+      </div>
+      <div>
+        <span class="text-slate-500 block">Dosen Pengampu:</span>
+        <span class="font-bold text-slate-800">Edwin Hari Agus Prastyo, S.Kom., M.Kom.</span>
+      </div>
+      <div>
+        <span class="text-slate-500 block">Status Commit Git:</span>
+        <span class="font-bold text-emerald-700 font-mono">feat(backend) PTM-06 (3aeac21)</span>
+      </div>
+      <div>
+        <span class="text-slate-500 block">Repositori GitHub:</span>
+        <a href="https://github.com/diadjengelokputriprasetyo-oss/Tugas-Prompting" class="font-bold text-blue-600 underline truncate block">
+          diadjengelokputriprasetyo-oss/Tugas-Prompting
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- BAGIAN 2: ARSITEKTUR SISTEM -->
+  <section class="mb-12">
+    <div class="flex items-center gap-3 border-b border-slate-200 pb-3 mb-6">
+      <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm">2</div>
+      <h2 class="text-xl font-bold text-slate-900">Arsitektur Sistem (System Architecture)</h2>
+    </div>
+
+    <p class="text-slate-700 mb-6 text-justify">
+      Sistem <b>AutoPartSmart</b> dirancang menggunakan pendekatan arsitektur berlapis (<i>layered architecture</i>) modular yang memisahkan tanggung jawab antara antarmuka pengguna (<i>frontend presentation</i>), layanan logika bisnis dan peramalan (<i>backend application service</i>), serta penyimpanan data persisten (<i>database persistence</i>). Arsitektur ini menjamin prinsip <i>high cohesion, loose coupling</i>, kemudahan pengujian unit secara independen, serta kepatuhan ketat terhadap spesifikasi kontrak <b>OpenAPI 3.0.3</b>.
+    </p>
+
+    <!-- Sub-bab 2.1 - 2.5 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <!-- 2.1 Frontend -->
+      <div class="p-5 rounded-xl border border-slate-200 bg-slate-50/50">
+        <h3 class="text-sm font-bold text-blue-900 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-desktop text-blue-600"></i>
+          2.1 Teknologi Frontend
+        </h3>
+        <ul class="space-y-2 text-xs text-slate-700">
+          <li>&bull; <b>Framework / Stack:</b> Single Page Application (SPA) berbasis HTML5 modern, Tailwind CSS v3 (desain responsif multi-device), dan JavaScript (ES6+ Modules).</li>
+          <li>&bull; <b>Visualisasi Interaktif:</b> Komponen grafik batang dan tren dinamis untuk komparasi histori penjualan bulanan vs hasil peramalan kuantitas AI.</li>
+          <li>&bull; <b>State &amp; Feedback Management:</b> Penanganan 5 kondisi UI utama secara eksplisit: <i>Idle / Input State</i>, <i>Loading / Inference State</i>, <i>Success Result State</i>, <i>Error Handling Banner</i>, dan <i>Empty State</i>.</li>
+        </ul>
+      </div>
+
+      <!-- 2.2 Backend -->
+      <div class="p-5 rounded-xl border border-slate-200 bg-slate-50/50">
+        <h3 class="text-sm font-bold text-indigo-900 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-server text-indigo-600"></i>
+          2.2 Teknologi Backend
+        </h3>
+        <ul class="space-y-2 text-xs text-slate-700">
+          <li>&bull; <b>Framework:</b> <b>Python FastAPI</b> (Asynchronous ASGI via Uvicorn), dilengkapi validasi data otomatis menggunakan Pydantic v2.</li>
+          <li>&bull; <b>Pola Arsitektur 3-Lapisan:</b>
+            <ul class="pl-4 mt-1 space-y-1 text-slate-600">
+              <li>1. <i>Routers:</i> Menangani validasi HTTP, routing, dan autentikasi Bearer token.</li>
+              <li>2. <i>Services:</i> Logika bisnis, enkripsi password, sanitasi input, dan inferensi AI.</li>
+              <li>3. <i>Repositories:</i> Abstraksi query database murni, terisolasi dari logika bisnis.</li>
+            </ul>
+          </li>
+          <li>&bull; <b>Keamanan &amp; Autentikasi:</b> Stateless OAuth2 Password Flow dengan token pair (Access Token JWT 30 menit &amp; Refresh Token 7 hari) serta hashing kata sandi <code>bcrypt</code> (work factor 12).</li>
+        </ul>
+      </div>
+
+      <!-- 2.3 Database -->
+      <div class="p-5 rounded-xl border border-slate-200 bg-slate-50/50">
+        <h3 class="text-sm font-bold text-emerald-900 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-database text-emerald-600"></i>
+          2.3 Database &amp; Penyimpanan Data
+        </h3>
+        <ul class="space-y-2 text-xs text-slate-700">
+          <li>&bull; <b>ORM Engine:</b> <b>SQLAlchemy 2.0</b> dengan <i>declarative mapping</i> dan pengelolaan daur hidup koneksi aman via generator <code>get_db</code> (auto-close, anti <i>connection leak</i>).</li>
+          <li>&bull; <b>RDBMS Kompatibilitas Ganda:</b> SQLite untuk pengujian lokal portabel tanpa konfigurasi server, serta siap migrasi ke PostgreSQL 15+ untuk produksi melalui variabel <code>DATABASE_URL</code>.</li>
+          <li>&bull; <b>Skema Relasional (ERD):</b>
+            <span class="block text-[11px] font-mono text-slate-600 mt-1">USERS (id PK, full_name, email UNIQUE, password_hash, created_at)</span>
+            <span class="block text-[11px] font-mono text-slate-600">PREDICTIONS (id PK, user_id FK, input_hash, input_data JSON, prediction_result JSON, confidence_score, is_fallback_triggered, created_at)</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 2.4 Integrasi API -->
+      <div class="p-5 rounded-xl border border-slate-200 bg-slate-50/50">
+        <h3 class="text-sm font-bold text-purple-900 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-network-wired text-purple-600"></i>
+          2.4 Integrasi API &amp; Proteksi OWASP
+        </h3>
+        <ul class="space-y-2 text-xs text-slate-700">
+          <li>&bull; <b>Protokol:</b> RESTful JSON API via HTTP/1.1 &amp; HTTP/2 berpedoman pada spesifikasi <code>docs/openapi.yaml</code>.</li>
+          <li>&bull; <b>Endpoint Autentikasi:</b> <code>POST /auth/register</code>, <code>POST /auth/login</code>, <code>POST /auth/refresh</code>, <code>GET /auth/me</code>.</li>
+          <li>&bull; <b>Endpoint Fitur AI:</b> <code>POST /predictions</code>, <code>GET /predictions</code> (paginated limit/offset), <code>GET /predictions/{id}</code>.</li>
+          <li>&bull; <b>Proteksi OWASP Anti-BOLA (API1:2023):</b> Pemeriksaan kepemilikan objek ketat (<code>prediction.user_id == current_user.id</code>); jika diakses pengguna lain sistem menolak via <b>HTTP 403 Forbidden</b>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2.5 Komponen AI/ML -->
+    <div class="p-5 rounded-xl border border-blue-200 bg-blue-50/40">
+      <h3 class="text-sm font-bold text-blue-900 mb-2 flex items-center gap-2">
+        <i class="fa-solid fa-microchip text-blue-600"></i>
+        2.5 Komponen AI/ML dalam Sistem
+      </h3>
+      <p class="text-xs text-slate-700 leading-relaxed mb-3">
+        Komponen kecerdasan buatan diisolasi ke dalam modul <code>app.services.ai_service.AIService</code>. Komponen ini menerima vektor fitur lag permintaan bulanan, menjalankan pembersihan karakter kontrol, memverifikasi tidak adanya injeksi instruksi (<i>Prompt Injection Guardrail</i>), menghitung <i>canonical SHA-256 hash</i> untuk auditabilitas, mengeksekusi model regresi KNN berbobot jarak, dan menghitung batas pengaman <i>Safety Stock</i> secara otomatis. Bila terjadi anomali masukan numerik, sistem mengaktifkan mekanisme <i>graceful fallback</i> (Moving Average) dengan flag <code>is_fallback_triggered = true</code>.
+      </p>
+    </div>
+  </section>
+
+  <div class="page-break"></div>
+
+  <!-- BAGIAN 3: DOKUMENTASI SCREENSHOT -->
+  <section class="mb-12">
+    <div class="flex items-center gap-3 border-b border-slate-200 pb-3 mb-6">
+      <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm">3</div>
+      <h2 class="text-xl font-bold text-slate-900">Dokumentasi Screenshot (SS) &amp; Penjelasan Antarmuka</h2>
+    </div>
+
+    <p class="text-slate-700 mb-8 text-justify">
+      Berikut adalah 6 (enam) dokumentasi tangkapan layar (<i>screenshot</i>) antarmuka aplikasi <b>AutoPartSmart</b> yang mencakup seluruh kondisi interaksi pengguna dan penanganan kesalahan sistem:
+    </p>
+
+    <!-- SS 1: Halaman Utama -->
+    <div class="mb-10 p-5 rounded-2xl border border-slate-300 bg-slate-50/50 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+          <span class="w-6 h-6 rounded bg-blue-600 text-white text-xs flex items-center justify-center">1</span>
+          Tampilan Halaman Utama Aplikasi (Dashboard AutoPartSmart)
+        </h3>
+        <span class="text-[11px] font-mono text-slate-500">docs/screenshots/ss-01-halaman-utama.png</span>
+      </div>
+      <img src="screenshots/ss-01-halaman-utama.png" alt="Tampilan Halaman Utama" class="w-full rounded-xl border border-slate-300 shadow-sm mb-3">
+      <div class="p-3 rounded-lg bg-white border border-slate-200 text-xs text-slate-700">
+        <b>Keterangan Fungsi &amp; Kondisi:</b> Menampilkan halaman awal aplikasi saat manajer persediaan bengkel berhasil login. Dashboard menyajikan metrik statistik performa model AI (Akurasi 92.69%, SMAPE 7.63%), jumlah prediksi aktif, status <i>Safety Stock</i> terjaga, indikator koneksi backend FastAPI (Online), serta tombol akses cepat untuk melakukan peramalan suku cadang.
+      </div>
+    </div>
+
+    <!-- SS 2: Input Pengguna -->
+    <div class="mb-10 p-5 rounded-2xl border border-slate-300 bg-slate-50/50 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+          <span class="w-6 h-6 rounded bg-blue-600 text-white text-xs flex items-center justify-center">2</span>
+          Proses Input Pengguna (Formulir Fitur Lag Suku Cadang)
+        </h3>
+        <span class="text-[11px] font-mono text-slate-500">docs/screenshots/ss-02-input-pengguna.png</span>
+      </div>
+      <img src="screenshots/ss-02-input-pengguna.png" alt="Proses Input Pengguna" class="w-full rounded-xl border border-slate-300 shadow-sm mb-3">
+      <div class="p-3 rounded-lg bg-white border border-slate-200 text-xs text-slate-700">
+        <b>Keterangan Fungsi &amp; Kondisi:</b> Antarmuka pengisian parameter peramalan di mana pengguna memasukkan kode suku cadang otomotif (<code>A-04000-081B0</code>) beserta histori penjualan 3 bulan berturut-turut: Lag 1 (bobot 50%), Lag 2 (bobot 30%), dan Lag 3 (bobot 20%). Terdapat indikator pemberitahuan bahwa seluruh masukan akan disanitasi secara otomatis terhadap injeksi sebelum diproses.
+      </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- SS 3: Loading / Inferensi -->
+    <div class="mb-10 p-5 rounded-2xl border border-slate-300 bg-slate-50/50 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+          <span class="w-6 h-6 rounded bg-blue-600 text-white text-xs flex items-center justify-center">3</span>
+          Proses Loading atau Inferensi AI/ML (Real-time Progress Indicator)
+        </h3>
+        <span class="text-[11px] font-mono text-slate-500">docs/screenshots/ss-03-loading-inferensi.png</span>
+      </div>
+      <img src="screenshots/ss-03-loading-inferensi.png" alt="Proses Loading Inferensi AI" class="w-full rounded-xl border border-slate-300 shadow-sm mb-3">
+      <div class="p-3 rounded-lg bg-white border border-slate-200 text-xs text-slate-700">
+        <b>Keterangan Fungsi &amp; Kondisi:</b> Tampilan umpan balik visual saat sistem memproses permintaan inferensi. Menampilkan animasi <i>spinner</i> cerdas, rincian tahapan eksekusi backend (Sanitasi string, ekstraksi vektor lag, scaling jarak Euclidean, dan kalkulasi batas pengaman stok), serta indikator latensi inferensi (&lt; 0.4 detik) untuk menjaga kenyamanan pengalaman pengguna (*UX*).
+      </div>
+    </div>
+
+    <!-- SS 4: Hasil Prediksi / Output Sistem -->
+    <div class="mb-10 p-5 rounded-2xl border border-slate-300 bg-slate-50/50 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+          <span class="w-6 h-6 rounded bg-blue-600 text-white text-xs flex items-center justify-center">4</span>
+          Hasil Prediksi atau Output Sistem (Rekomendasi Restock &amp; Safety Stock)
+        </h3>
+        <span class="text-[11px] font-mono text-slate-500">docs/screenshots/ss-04-hasil-prediksi.png</span>
+      </div>
+      <img src="screenshots/ss-04-hasil-prediksi.png" alt="Hasil Prediksi AI" class="w-full rounded-xl border border-slate-300 shadow-sm mb-3">
+      <div class="p-3 rounded-lg bg-white border border-slate-200 text-xs text-slate-700">
+        <b>Keterangan Fungsi &amp; Kondisi:</b> Menampilkan hasil komputasi lengkap model AI: Nilai Proyeksi Permintaan (8.60 Unit), Rekomendasi <i>Safety Stock</i> (4 Unit), Total Rekomendasi Restock (13 Unit), dan <i>Confidence Score</i> 94%. Dilengkapi visualisasi grafik tren batang historis vs prediksi masa depan serta bukti auditabilitas <i>Input SHA-256 Hash</i> yang terikat aman pada User ID pengunggah.
+      </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- SS 5: Error Handling -->
+    <div class="mb-10 p-5 rounded-2xl border border-slate-300 bg-slate-50/50 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+          <span class="w-6 h-6 rounded bg-rose-600 text-white text-xs flex items-center justify-center">5</span>
+          Tampilan Error Handling (Penolakan Prompt Injection &amp; HTTP 422)
+        </h3>
+        <span class="text-[11px] font-mono text-slate-500">docs/screenshots/ss-05-error-handling.png</span>
+      </div>
+      <img src="screenshots/ss-05-error-handling.png" alt="Tampilan Error Handling" class="w-full rounded-xl border border-slate-300 shadow-sm mb-3">
+      <div class="p-3 rounded-lg bg-white border border-slate-200 text-xs text-slate-700">
+        <b>Keterangan Fungsi &amp; Kondisi:</b> Tampilan penanganan galat saat sistem mendeteksi masukan berbahaya. Ketika pengguna mencoba memasukkan instruksi manipulatif (<i>Prompt Injection: "IGNORE ALL PREVIOUS INSTRUCTIONS..."</i>), sistem memblokir request dengan status <b>HTTP 422 Unprocessable Content</b>, mencatat log guardrail OWASP, dan menampilkan panduan perbaikan yang jelas kepada pengguna tanpa memicu <i>server crash</i>.
+      </div>
+    </div>
+
+    <!-- SS 6: Empty State -->
+    <div class="mb-10 p-5 rounded-2xl border border-slate-300 bg-slate-50/50 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+          <span class="w-6 h-6 rounded bg-slate-600 text-white text-xs flex items-center justify-center">6</span>
+          Tampilan Empty State (Kondisi Saat Data Riwayat Belum Tersedia)
+        </h3>
+        <span class="text-[11px] font-mono text-slate-500">docs/screenshots/ss-06-empty-state.png</span>
+      </div>
+      <img src="screenshots/ss-06-empty-state.png" alt="Tampilan Empty State" class="w-full rounded-xl border border-slate-300 shadow-sm mb-3">
+      <div class="p-3 rounded-lg bg-white border border-slate-200 text-xs text-slate-700">
+        <b>Keterangan Fungsi &amp; Kondisi:</b> Tampilan ramah pengguna pada tab riwayat saat pengguna baru membuka aplikasi dan belum memiliki data catatan peramalan sebelumnya. Menampilkan ikon ilustrasi kotak kosong, pesan informatif bahwa data belum tersedia, serta tombol aksi ajakan (<i>Call to Action</i>) untuk memulai prediksi pertama atau mengunggah berkas CSV.
+      </div>
+    </div>
+  </section>
+
+  <div class="page-break"></div>
+
+  <!-- BAGIAN 4: PENJELASAN IMPLEMENTASI AI/ML -->
+  <section class="mb-12">
+    <div class="flex items-center gap-3 border-b border-slate-200 pb-3 mb-6">
+      <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm">4</div>
+      <h2 class="text-xl font-bold text-slate-900">Penjelasan Implementasi Kecerdasan Buatan (AI/ML)</h2>
+    </div>
+
+    <!-- 4.1 Jenis Model -->
+    <div class="mb-6">
+      <h3 class="text-sm font-bold text-slate-900 mb-2">4.1 Jenis Model &amp; Metode AI/ML yang Digunakan</h3>
+      <p class="text-xs text-slate-700 text-justify mb-2">
+        Sistem mengimplementasikan pendekatan <b>Supervised Machine Learning Regresi</b> yang dikombinasikan dengan teknik peramalan deret waktu (*time-series forecasting*):
+      </p>
+      <ul class="space-y-1.5 text-xs text-slate-700 pl-4 list-disc">
+        <li><b>Model Inti (Must-Have): K-Nearest Neighbors (KNN) Regressor.</b> Dipilih karena sifat data permintaan suku cadang otomotif yang non-linier dan sporadis (*intermittent demand*). Model KNN bekerja dengan mencari $k$ tetangga historis terdekat berdasarkan metrik jarak Euclidean dan melakukan estimasi kuantitas menggunakan pembobotan invers jarak (*distance weighting*).</li>
+        <li><b>Model Lanjutan (Should-Have): Support Vector Machine (SVR) dengan RBF Kernel</b> untuk menangkap fluktuasi kompleks serta model *Hybrid Ensemble* (kombinasi KNN + SVR).</li>
+        <li><b>Heuristic Fallback Engine:</b> Menggunakan algoritma *3-Month Exponential Weighted Moving Average* yang otomatis aktif apabila model utama mengalami anomali masukan atau gangguan komputasi.</li>
+      </ul>
+    </div>
+
+    <!-- 4.2 Dataset & Sumber Data -->
+    <div class="mb-6">
+      <h3 class="text-sm font-bold text-slate-900 mb-2">4.2 Dataset &amp; Sumber Data yang Digunakan</h3>
+      <p class="text-xs text-slate-700 text-justify mb-2">
+        Data yang digunakan mengacu pada riset transaksi penjualan suku cadang bengkel otomotif selama <b>33 bulan berturut-turut</b>. Karakteristik utama dataset ini memiliki pola fluktuasi ekstrem (*lumpy demand*), di mana permintaan barang dapat bernilai 0 atau 1 pada beberapa bulan, kemudian mendadak melonjak hingga 10 unit (contoh kasus item <code>A-04000-081B0</code>). Struktur data mencakup:
+      </p>
+      <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 font-mono text-[11px] text-slate-700">
+        Columns: [item_code, part_name, transaction_period, sales_quantity, customer_type]
+      </div>
+    </div>
+
+    <!-- 4.3 Preprocessing Data -->
+    <div class="mb-6">
+      <h3 class="text-sm font-bold text-slate-900 mb-2">4.3 Tahapan Preprocessing Data</h3>
+      <ol class="space-y-2 text-xs text-slate-700 pl-4 list-decimal">
+        <li><b>Pembersihan &amp; Imputasi Data:</b> Mengisi periode bulan tanpa transaksi penjualan dengan nilai kuantitas 0 (mencegah kekosongan deret waktu bulanan).</li>
+        <li><b>Rekayasa Fitur Lag (*Lag Feature Engineering*):</b> Mengonversi deret waktu univariat menjadi matriks fitur tabular dengan mengekstraksi nilai permintaan masa lalu:
+          <div class="grid grid-cols-3 gap-3 my-2 text-center font-mono text-[11px]">
+            <div class="p-2 bg-slate-100 rounded border">Lag 1 = Q(t-1) [Bobot 50%]</div>
+            <div class="p-2 bg-slate-100 rounded border">Lag 2 = Q(t-2) [Bobot 30%]</div>
+            <div class="p-2 bg-slate-100 rounded border">Lag 3 = Q(t-3) [Bobot 20%]</div>
+          </div>
+        </li>
+        <li><b>Feature Scaling:</b> Penerapan <code>StandardScaler</code> / <code>MinMaxScaler</code> dari pustaka Scikit-learn agar jarak Euclidean antarfaktor lag seimbang dan tidak bias terhadap suku cadang bervolume tinggi.</li>
+      </ol>
+    </div>
+
+    <!-- 4.4 Training & Penggunaan Model -->
+    <div class="mb-6">
+      <h3 class="text-sm font-bold text-slate-900 mb-2">4.4 Proses Training &amp; Penggunaan Model</h3>
+      <p class="text-xs text-slate-700 text-justify mb-2">
+        Model dilatih menggunakan pustaka <b>Scikit-learn (Python)</b> dengan validasi temporal <i>Time-Series Split</i> (5-fold rolling window) untuk mencegah kebocoran data masa depan (*data leakage*). Nilai hyperparameter terbaik diperoleh pada $k=3$ dengan pembobotan <code>weights='distance'</code>. Model yang telah dilatih disimpan dalam format serial <code>models/knn_model.joblib</code> bersama berkas scaler <code>models/scaler.joblib</code> dan dimuat saat runtime backend FastAPI diinisialisasi.
+      </p>
+    </div>
+
+    <!-- 4.5 Cara Model Menghasilkan Output -->
+    <div class="mb-6">
+      <h3 class="text-sm font-bold text-slate-900 mb-2">4.5 Cara Model Menghasilkan Output &amp; Formulasi Matematis</h3>
+      <p class="text-xs text-slate-700 text-justify mb-2">
+        Inferensi menghasilkan rekomendasi pengadaan suku cadang melalui tiga tahapan matematis:
+      </p>
+      <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 text-xs text-slate-800">
+        <div>
+          <b>1. Estimasi Permintaan Periode Berikutnya ($\hat{Q}_{t+1}$):</b>
+          <div class="font-mono text-blue-700 mt-1">
+            &Hat;Q_(t+1) = &sum; (w_i &times; Q_(t-i)) / &sum; w_i &nbsp;&nbsp;&rArr;&nbsp;&nbsp; &Hat;Q_(t+1) = (0.50 &times; Lag_1) + (0.30 &times; Lag_2) + (0.20 &times; Lag_3)
+          </div>
+        </div>
+        <div>
+          <b>2. Perhitungan Safety Stock Pengaman Persediaan ($SS$):</b>
+          <div class="font-mono text-indigo-700 mt-1">
+            SS = &lceil; Z &times; &sigma;_L &times; &radic;L &rceil;
+          </div>
+          <span class="text-[11px] text-slate-600 block mt-0.5">
+            Di mana $Z = 1.65$ untuk <i>service level</i> 95% (mencegah kehabisan stok <i>stockout</i>), $\sigma_L$ adalah standar deviasi dari 3 bulan terakhir, dan $L = 1$ bulan <i>lead time</i> pengiriman.
+          </span>
+        </div>
+        <div>
+          <b>3. Total Rekomendasi Restock Pengadaan:</b>
+          <div class="font-mono text-emerald-700 mt-1">
+            Total Restock = &lceil; &Hat;Q_(t+1) + SS &rceil;
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4.6 Evaluasi & Performa -->
+    <div>
+      <h3 class="text-sm font-bold text-slate-900 mb-2">4.6 Evaluasi &amp; Pengukuran Performa Model</h3>
+      <p class="text-xs text-slate-700 text-justify mb-3">
+        Performa model dievaluasi menggunakan metrik standar peramalan deret waktu industri: <b>SMAPE</b> (*Symmetric Mean Absolute Percentage Error*) dan <b>MAPE</b> (*Mean Absolute Percentage Error*).
+      </p>
+      <table class="w-full text-xs text-left border border-slate-200 rounded-lg overflow-hidden mb-3">
+        <thead class="bg-slate-100 text-slate-700 uppercase font-semibold">
+          <tr>
+            <th class="p-2.5 border-b">Metode / Model Peramalan</th>
+            <th class="p-2.5 border-b text-center">Nilai MAPE (%)</th>
+            <th class="p-2.5 border-b text-center">Nilai SMAPE (%)</th>
+            <th class="p-2.5 border-b">Evaluasi Terhadap Pola Suku Cadang</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <tr>
+            <td class="p-2.5 font-medium">Metode Statistik Klasik (SARIMA)</td>
+            <td class="p-2.5 text-center text-rose-600 font-bold">33.91%</td>
+            <td class="p-2.5 text-center text-rose-600 font-bold">28.23%</td>
+            <td class="p-2.5 text-slate-600">Gagal menangkap pola non-linier; menghasilkan proyeksi bernilai negatif.</td>
+          </tr>
+          <tr>
+            <td class="p-2.5 font-medium">Support Vector Regression (SVR)</td>
+            <td class="p-2.5 text-center text-blue-600 font-bold">11.40%</td>
+            <td class="p-2.5 text-center text-blue-600 font-bold">10.85%</td>
+            <td class="p-2.5 text-slate-600">Cukup baik namun sensitif terhadap nilai pencilan (outliers).</td>
+          </tr>
+          <tr class="bg-emerald-50/60 font-semibold text-emerald-900">
+            <td class="p-2.5">KNN Regressor + Lag Features (Model Terpilih)</td>
+            <td class="p-2.5 text-center text-emerald-600 font-bold">7.31%</td>
+            <td class="p-2.5 text-center text-emerald-600 font-bold">7.63%</td>
+            <td class="p-2.5 text-emerald-700">Akurasi terbaik, lolos target kualitas NFR-01 (SMAPE &lt; 10%), stabil.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- BAGIAN 5: TAUTAN GITHUB & LAMPIRAN -->
+  <section class="border-t-2 border-slate-900 pt-6 mt-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h4 class="font-bold text-slate-900 text-sm">Tautan Repositori GitHub &amp; Submisi Tugas:</h4>
+        <a href="https://github.com/diadjengelokputriprasetyo-oss/Tugas-Prompting" class="text-blue-600 font-mono text-xs underline font-bold mt-1 block">
+          https://github.com/diadjengelokputriprasetyo-oss/Tugas-Prompting
+        </a>
+      </div>
+      <div class="text-right text-xs text-slate-500">
+        <div>Berkas Dokumen Laporan: <b>docs/LAPORAN_PRAKTIKUM_PTM06_IMWAD.pdf</b></div>
+        <div>Commit Hash Terverifikasi: <code class="font-bold text-slate-700">3aeac21</code></div>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>
