@@ -1,0 +1,368 @@
+openapi: 3.0.3
+info:
+  title: Intelligent Application Backend API
+  description: >
+    Spesifikasi REST API untuk backend layanan aplikasi berbasis AI.
+    Menyediakan endpoint autentikasi, manajemen data, dan inferensi model AI.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Lingkungan Pengembangan Lokal (FastAPI Dev Server)
+  - url: https://api.example.com/api/v1
+    description: Lingkungan Produksi (Placeholder)
+
+tags:
+  - name: Authentication
+    description: Operasi autentikasi dan manajemen sesi pengguna
+  - name: Predictions
+    description: Fitur berbasis AI untuk prediksi dan inferensi model [AI]
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Pendaftaran Pengguna Baru
+      description: Mendaftarkan pengguna baru ke dalam sistem. [ASUMSI-01: Metode autentikasi menggunakan Email dan Password]
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegisterRequest'
+      responses:
+        '201':
+          description: Pengguna berhasil terdaftar.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Data pendaftaran tidak valid atau Email sudah terdaftar.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Kesalahan validasi entitas masukan.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '500':
+          description: Kesalahan internal server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Otentikasi Pengguna & Buat Token
+      description: Melakukan verifikasi kredensial pengguna dan mengembalikan JWT Access Token.
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginRequest'
+      responses:
+        '200':
+          description: Login berhasil, token dikembalikan.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          description: Email atau password salah.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Format masukan tidak valid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '500':
+          description: Kesalahan internal server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /predictions:
+    post:
+      tags:
+        - Predictions
+        - AI
+      summary: Buat Prediksi Baru (Model AI)
+      description: >
+        Mengirimkan data masukan untuk diproses oleh model AI dan mengembalikan hasil prediksi.
+        Menggunakan mekanisme fallback jika model AI lokal/layanan gagal merespons. [ASUMSI-02: Fitur AI menerima data berbasis JSON masukan]
+      operationId: createPrediction
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PredictionRequest'
+      responses:
+        '201':
+          description: Hasil prediksi AI berhasil dibuat.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PredictionResponse'
+        '401':
+          description: Sesi tidak valid atau token kadaluwarsa.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Format data masukan untuk prediksi tidak sesuai skema validasi.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '500':
+          description: Kesalahan internal pemrosesan model AI atau server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    get:
+      tags:
+        - Predictions
+      summary: Ambil Riwayat Prediksi Pengguna
+      description: Mendapatkan daftar riwayat prediksi yang telah dilakukan oleh pengguna terautentikasi. [ASUMSI-03: Riwayat dikembalikan secara terpaginasi]
+      operationId: getPredictionHistory
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          description: Jumlah maksimum data yang dikembalikan.
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: offset
+          in: query
+          description: Jumlah data yang dilewati untuk paginasi.
+          required: false
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Riwayat prediksi berhasil diambil.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PredictionResponse'
+        '401':
+          description: Akses ditolak, autentikasi dibutuhkan.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Terjadi kesalahan pada server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /predictions/{prediction_id}:
+    get:
+      tags:
+        - Predictions
+      summary: Detail Hasil Prediksi
+      description: Mengambil informasi detail berdasarkan ID prediksi spesifik.
+      operationId: getPredictionById
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: prediction_id
+          in: path
+          required: true
+          description: Identitas unik (UUID) dari hasil prediksi.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Detail prediksi ditemukan.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PredictionResponse'
+        '401':
+          description: Akses ditolak.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Data prediksi dengan ID tersebut tidak ditemukan.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Kesalahan internal server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    UserRegisterRequest:
+      type: object
+      required:
+        - full_name
+        - email
+        - password
+      properties:
+        full_name:
+          type: string
+          example: "Ahmad Dahlan"
+        email:
+          type: string
+          format: email
+          example: "ahmad@example.com"
+        password:
+          type: string
+          format: password
+          minLength: 8
+          example: "SecurePass123!"
+
+    UserLoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: "ahmad@example.com"
+        password:
+          type: string
+          format: password
+          example: "SecurePass123!"
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
+        full_name:
+          type: string
+          example: "Ahmad Dahlan"
+        email:
+          type: string
+          format: email
+          example: "ahmad@example.com"
+        created_at:
+          type: string
+          format: date-time
+
+    TokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        token_type:
+          type: string
+          example: "bearer"
+
+    PredictionRequest:
+      type: object
+      required:
+        - input_data
+      properties:
+        input_data:
+          type: object
+          description: Payload fitur acuan untuk inferensi AI
+          example: {"feature_1": 12.5, "feature_2": "kategori_a"}
+
+    PredictionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "c9bf9e57-1685-4c89-bafb-ff5af830be8a"
+        user_id:
+          type: string
+          format: uuid
+          example: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
+        input_hash:
+          type: string
+          example: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        prediction_result:
+          type: object
+          example: {"label": "Positif", "score": 0.95}
+        confidence_score:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+          example: 0.95
+        is_fallback_triggered:
+          type: boolean
+          example: false
+        created_at:
+          type: string
+          format: date-time
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: "Permintaan tidak valid atau data gagal diproses."
+
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            type: object
+            properties:
+              loc:
+                type: array
+                items:
+                  type: string
+              msg:
+                type: string
+              type:
+                type: string

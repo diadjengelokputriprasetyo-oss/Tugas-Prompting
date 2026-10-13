@@ -1,0 +1,21 @@
+# Environments
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Testing & Cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local Database & Secrets
+*.db
+*.sqlite3
+.env
+
+# OS Files
+.DS_Store
+Thumbs.db
